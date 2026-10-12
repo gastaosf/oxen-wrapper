@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seedance Studio</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◼</span>
+      <div>
+        <h1>Seedance Studio</h1>
+        <p class="sub">ByteDance Seedance 2.5 via <span id="providerName">Oxen.ai</span></p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="spend" id="spend" title="Total charged for video generations in your namespace (GET /api/ai/generations). The provider exposes no credits-balance endpoint.">
+        <span class="spend-label">Spent</span>
+        <span class="spend-value" id="spendValue">…</span>
+      </div>
+      <button class="icon-btn" id="refreshSpend" title="Refresh spend">↻</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <main class="layout">
+    <section class="panel compose">
+      <nav class="tabs" id="modeTabs" role="tablist"></nav>
+      <p class="mode-desc" id="modeDesc"></p>
+
+      <form id="genForm" autocomplete="off">
+        <label class="field">
+          <div class="label-row">
+            <span>Prompt</span>
+            <span class="count" id="promptCount">0 chars</span>
+          </div>
+          <textarea id="prompt" rows="5" placeholder="Describe the shot, motion, camera and sound…"></textarea>
+          <p class="hint" id="promptHint"></p>
+        </label>
+
+        <!-- Image to video -->
+        <div class="media-group" data-media="startFrame">
+          <div class="media-slot" id="slot-startFrame"></div>
+          <div class="media-slot" id="slot-endFrame"></div>
+        </div>
+
+        <!-- Reference / extend / edit -->
+        <div class="media-group" data-media="refs">
+          <div class="media-list" id="list-refVideos"></div>
+          <div class="media-list" id="list-refImages"></div>
+          <div class="media-list" id="list-refAudios"></div>
+        </div>
+
+        <div class="controls">
+          <label class="field" data-control="aspectRatio">
+            <span>Aspect ratio</span>
+            <select id="aspect_ratio"></select>
+          </label>
+          <label class="field" data-control="duration">
+            <span>Duration</span>
+            <div class="duration-row">
+              <select id="durationMode">
+                <option value="auto">auto</option>
+                <option value="fixed">seconds</option>
+              </select>
+              <input type="number" id="duration" min="4" max="30" step="1" value="5" class="hidden" />
+            </div>
+          </label>
+          <label class="field" data-control="resolution">
+            <span>Resolution</span>
+            <select id="resolution"></select>
+          </label>
+          <label class="field" data-control="outputFormat">
+            <span>Format</span>
+            <select id="output_format"></select>
+          </label>
+          <label class="field" data-control="seed" id="seedField">
+            <span>Seed <small>(optional)</small></span>
+            <input type="number" id="seed" step="1" placeholder="random" />
+          </label>
+        </div>
+
+        <div class="toggles">
+          <label class="toggle" data-control="audio"><input type="checkbox" id="generate_audio" checked /><span>Generate audio</span></label>
+          <label class="toggle" data-control="draft"><input type="checkbox" id="draft" /><span>Draft (480p preview, render 1080p later)</span></label>
+          <label class="toggle" data-control="watermark"><input type="checkbox" id="watermark" /><span>"AI generated" watermark</span></label>
+        </div>
+
+        <div class="estimate" id="estimate">Estimating cost…</div>
+        <div class="form-error hidden" id="formError"></div>
+
+        <div class="actions">
+          <button type="submit" class="primary" id="submitBtn">Generate</button>
+          <button type="button" class="ghost" id="resetBtn">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel results">
+      <div class="results-head">
+        <h2>Jobs</h2>
+        <div class="filter-row">
+          <label>Filter
+            <select id="filterMode">
+              <option value="">All modes</option>
+            </select>
+          </label>
+          <span class="muted" id="jobCount"></span>
+        </div>
+      </div>
+      <div id="jobs" class="jobs"></div>
+      <p class="empty hidden" id="jobsEmpty">No jobs yet. Submit a generation to get started.</p>
+    </section>
+  </main>
+
+  <template id="tplJob">
+    <article class="job">
+      <div class="job-media"></div>
+      <div class="job-body">
+        <div class="job-top">
+          <span class="badge mode"></span>
+          <span class="badge status"></span>
+          <span class="badge draft hidden">draft</span>
+          <span class="badge final hidden">1080p final</span>
+          <span class="elapsed muted"></span>
+          <span class="cost muted"></span>
+        </div>
+        <p class="job-prompt"></p>
+        <p class="job-params muted"></p>
+        <div class="job-error hidden"></div>
+        <div class="job-actions"></div>
+      </div>
+    </article>
+  </template>
+
+  <script src="/app.js"></script>
+</body>
+</html>
